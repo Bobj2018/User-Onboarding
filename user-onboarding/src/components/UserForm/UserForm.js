@@ -3,12 +3,17 @@ import { withFormik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
-function UserForm({ values, errors, touched, status }) {
+function UserForm({ values, errors, touched, status, setUsers, users }) {
 	console.log('values', values);
 	console.log('errors', errors);
 	console.log('touched', touched);
 
-	const [ users, setUsers ] = useState([]);
+	useEffect(
+		() => {
+			status && setUsers([ ...users, status ]);
+		},
+		[ status ]
+	);
 
 	return (
 		<div className="user-form">
@@ -57,8 +62,8 @@ const FormikUserForm = withFormik({
 		axios
 			.post('https://reqres.in/api/users', values)
 			.then((res) => {
-                console.log('success', res);
-                setStatus(res.data)
+				console.log('success', res);
+				setStatus(res.data);
 				resetForm();
 			})
 			.catch((err) => console.log('error', err));
